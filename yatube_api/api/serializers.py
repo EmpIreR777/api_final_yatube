@@ -1,23 +1,60 @@
 from rest_framework import serializers
-from rest_framework.relations import SlugRelatedField
+from rest_framework.validators import UniqueTogetherValidator
+
+from posts.models import Post, Group, Comment, User, Follow
 
 
-from posts.models import Comment, Post
+class FollowSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(
+        slug_field='username',
+        queryset=User.objects.all(),
+        default=serializers.CurrentUserDefault())
+    following = serializers.SlugRelatedField(
+        slug_field='username',
+        queryset=User.objects.all())
+
+    class Meta:
+        model = Follow
+        fields = ('user', 'following')
+        validators = (
+            UniqueTogetherValidator(
+                queryset=Follow.objects.all(),
+                fields=('user', 'following'),
+                message=('Подписка на автора оформлена ранее!')
+            ),
+        )
+
+    def validate(self, data):
+        if data['user'] == data['following']:
+            raise serializers.ValidationError(
+                'Нельзя подписаться на самого себя!')
+        return data
 
 
 class PostSerializer(serializers.ModelSerializer):
-    author = SlugRelatedField(slug_field='username', read_only=True)
+    """Сериализация постов."""
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username')
 
     class Meta:
-        fields = '__all__'
         model = Post
+        fields = ('id', 'text', 'author', 'pub_date', 'group', 'image')
+
+
+class GroupSerializer(serializers.ModelSerializer):
+    """Сериализация групп."""
+    class Meta:
+        model = Group
+        fields = ('id', 'title', 'slug', 'description')
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
-        read_only=True, slug_field='username'
-    )
+    """Сериализация комментариев."""
+    author = serializers.SlugRelatedField(read_only=True,
+                                          slug_field='username')
 
     class Meta:
-        fields = '__all__'
         model = Comment
+        fields = ('id', 'text', 'author', 'post', 'created')
+        read_only_fields = ('post',)
