@@ -1,10 +1,15 @@
+import os
 from pathlib import Path
 
 from datetime import timedelta
 
+from dotenv import load_dotenv, find_dotenv
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'hhz7l-ltdismtf@bzyz+rple7*s*w$jak%whj@(@u0eok^f9k4'
+load_dotenv(find_dotenv())
+
+SECRET_KEY = os.environ['SECRET_KEY']
 
 DEBUG = True
 
@@ -17,7 +22,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
     'rest_framework',
     'djoser',
     'drf_spectacular',
