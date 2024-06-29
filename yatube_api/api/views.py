@@ -1,13 +1,16 @@
 from rest_framework.generics import get_object_or_404
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework import viewsets, permissions, mixins
+from rest_framework import viewsets, permissions
 from drf_spectacular.utils import extend_schema, OpenApiResponse
 
 from posts.models import Post, Group
 from .serializers import (
-    PostSerializer, GroupSerializer,
-    CommentSerializer, FollowSerializer)
+    PostSerializer,
+    GroupSerializer,
+    CommentSerializer,
+    FollowSerializer,
+)
 from .permissions import IsAuthorOrReadOnly
 
 
