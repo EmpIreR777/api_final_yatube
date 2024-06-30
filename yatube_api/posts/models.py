@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -13,6 +14,11 @@ class Group(models.Model):
         verbose_name='slug',)
     description = models.TextField(
         verbose_name='Описание',)
+
+    class Meta:
+        ordering = ('title', 'id')
+        verbose_name = 'Группа'
+        verbose_name_plural = 'Группы'
 
     def __str__(self):
         return self.title
@@ -41,6 +47,11 @@ class Post(models.Model):
         verbose_name='Группа',
     )
 
+    class Meta:
+        ordering = ('pub_date', 'id')
+        verbose_name = 'Пост'
+        verbose_name_plural = 'Посты'
+
     def __str__(self):
         return self.text
 
@@ -63,8 +74,13 @@ class Comment(models.Model):
         db_index=True
     )
 
+    class Meta:
+        ordering = ('-created', 'id')
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+    
     def __str__(self):
-        return self.text
+        return self.text[:settings.LIMIT]
 
 
 class Follow(models.Model):
@@ -77,5 +93,18 @@ class Follow(models.Model):
         related_name='following',
         verbose_name='Подписан',)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'following'],
+                                    name='unique_user'),
+            models.CheckConstraint(
+                check=~models.Q(user=models.F('following')),
+                name='not_yourself_follow',
+            ),
+        ]
+        ordering = ('user', 'following', 'id')
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+
     def __str__(self):
-        return f'{self.user}'
+        return f'{self.user} подписан на {self.following}'
