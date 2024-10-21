@@ -29,29 +29,29 @@ API поддерживает следующие методы:
 ### Как запустить проект
 
 1. Клонируйте репозиторий и перейдите в его директорию:
-'''cd api_final_yatube'''
+```cd api_final_yatube```
    
 
 3. Создайте и активируйте виртуальное окружение:
-'''python3 -m venv env'''
+```python3 -m venv env```
    source env/bin/activate
    
 
 5. Установите зависимости из файла requirements.txt:
-'''python3 -m pip install --upgrade pip'''
-   pip install -r requirements.txt
+```python3 -m pip install --upgrade pip```
+```pip install -r requirements.txt```
    
 
 6. Выполните миграции:
-'''python3 manage.py migrate'''
+```python3 manage.py migrate```
    
 
 7. Создайте суперпользователя:
-'''python3 manage.py createsuperuser'''
+```python3 manage.py createsuperuser```
    
 
 8. Запустите проект:
-'''python3 manage.py runserver'''
+```python3 manage.py runserver```
    
 
 Теперь проект доступен по адресу http://127.0.0.1:8000/.
